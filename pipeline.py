@@ -13,24 +13,17 @@ PATH = 'data/tracts.csv'
 TRAIN_YEAR = 2012
 TEST_YEAR = 2013
 
-class process:
-    '''
-    Class for data pipeline
-    '''
-    def __init__(self):
 
-        self.df = self.load_data()
+def load_data():
+    df=None
+    if os.path.exists(PATH):
+        df = pd.read_csv(PATH)
+    else:
+        raise Exception('The file does not exist')
+     
+    df.drop('GEOID', inplace=True, axis=1)   
 
-    def load_data(self):
-
-        if os.path.exists(PATH):
-            df = pd.read_csv(PATH)
-        else:
-            raise Exception('The file does not exist')
-         
-        df.drop('GEOID', inplace=True, axis=1)   
-
-        return df
+    return df
 
 def make_target(df):
 
