@@ -21,7 +21,7 @@ def load_data():
     else:
         raise Exception('The file does not exist')
      
-    df.drop('GEOID', inplace=True, axis=1)   
+    # df.drop('GEOID', inplace=True, axis=1)
 
     return df
 
