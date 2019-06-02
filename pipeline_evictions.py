@@ -195,7 +195,7 @@ def plot_models_in_time(models_to_run, best_models_df, metric):
   ax1.set_ylabel(metric)
 
   #Invert x_axis so as to show from earliest to latest
-  ax1.invert_xaxis()
+  # ax1.invert_xaxis()
 
   plt.show()
 
