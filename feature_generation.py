@@ -9,9 +9,9 @@ import pandas as pd
 AGGREGATION = 'parent-location'
 
 # eg. poverty rate by tract/county
-ORIGINAL = ['poverty-rate', 'population', 'pct-white', 'pct-af-am', 'low-flag',
+ORIGINAL = ['poverty-rate', 'population', 'pct-white', 'pct-af-am',
             'pct-hispanic', 'pct-am-ind', 'pct-asian', 'pct-nh-pi',
-            'pct-multiple', 'pct-other', 'year', 'imputed', 'subbed',
+            'pct-multiple', 'pct-other', 'year',
             'median-household-income', 'median-gross-rent',
             'eviction-filing-rate', 'eviction-filings',
             'median-property-value', 'evictions', 'rent-burden',
