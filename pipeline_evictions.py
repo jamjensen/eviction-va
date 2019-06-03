@@ -17,6 +17,7 @@ from sklearn.model_selection import ParameterGrid
 
 from sklearn.metrics import classification_report
 from sklearn.metrics import precision_recall_curve
+from sklearn.metrics import roc_auc_score
 
 from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta
@@ -233,12 +234,13 @@ def metric_at_k(y_true, y_scores, k, metric):
   # #classification_report returns different metrics for the prediction
   results = classification_report(y_true, binary_predictions_at_k, output_dict = True)
   
+
   if(metric=='precision'):
-    metric = results['1']['precision']
+    metric = results['1.0']['precision']
   elif(metric=='recall'):
-    metric = results['1']['recall']
+    metric = results['1.0']['recall']
   elif(metric=='f1'):
-    metric = results['1']['f1-score']
+    metric = results['1.0']['f1-score']
 
   return metric
 
