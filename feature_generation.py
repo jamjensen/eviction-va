@@ -11,7 +11,7 @@ AGGREGATION = 'parent-location'
 # eg. poverty rate by tract/county
 ORIGINAL = ['poverty-rate', 'population', 'pct-white', 'pct-af-am',
             'pct-hispanic', 'pct-am-ind', 'pct-asian', 'pct-nh-pi',
-            'pct-multiple', 'pct-other', 'year',
+            'pct-multiple', 'pct-other', #'year',
             'median-household-income', 'median-gross-rent',
             'eviction-filing-rate', 'eviction-filings',
             'median-property-value', 'evictions', 'rent-burden',
@@ -27,13 +27,10 @@ THRESHOLDS = [1, 5, 10, 25, 50, 75]
 ABSOLUTES = ['median-household-income', 'median-gross-rent',
              'eviction-filings', 'median-property-value', 'evictions',
              'renter-occupied-households', 'population']
-YEARS = [1, 2, 5]
+
+YEARS = []#1, 2,  #Change to only 5 cause data has no differences for periods <5.
 THRESHOLDS_ABSOLUTE = [-.5, -.3, -.1, .05, .1, .3, .5]
 THRESHOLDS_PERCENT = [-50, -30, -10, 5, 10, 30, 50]
-
-
-
-
 
 
 # eg. population X-ile by tract/county (decile, quartile)
@@ -59,7 +56,9 @@ def avg_continuous_by_county(df, features=ORIGINAL, aggregation=AGGREGATION):
     Creates features that aggregate each continuous variable at the county
     level for each row (tract).
     '''
+
     for var in features:
+
         county_total = df.groupby([aggregation, 'year'])[var].mean().rename('county_average_'
                        + var).reset_index()
         df = df.merge(county_total)
@@ -115,6 +114,7 @@ def percent_change_over_years(df, features=PERCENTAGES, years=YEARS):
 
 def create_features(df):
 
+
     df = avg_continuous_by_county(df, features=ORIGINAL, aggregation=AGGREGATION)
     
     df = absolute_binary(df, features=PERCENTAGES, thresholds=THRESHOLDS)
@@ -139,6 +139,10 @@ def create_features(df):
     county_changes = ['county_average_' + var + '_change_over_previous_' + str(year) + '_years' for var in PERCENTAGES for year in YEARS]
     df = absolute_binary(df, features=county_changes, thresholds=THRESHOLDS_PERCENT)
 
-    return df
+    #Droping categorical variables (GEOID, name, parent location)
+    df.drop(columns=['GEOID', 'name','parent-location','year'], inplace=True)
 
-#STEP FINAL: drop GEOID and name from features list
+    #Changing year from timespam to int
+    #Pending
+
+    return df
