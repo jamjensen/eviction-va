@@ -135,9 +135,9 @@ def get_models_and_parameters(grid=None):
 
     'DT': {'criterion': ['gini', 'entropy'], 'max_depth': [2,5,10,50,100],'min_samples_split': [2,5]},
     'LR': { 'penalty': ['l1','l2'], 'C': [0.001,0.1,1,10]},
-    'RF': {'n_estimators': [10,100], 'max_depth': [5,50], 'max_features': ['sqrt','log2'],'min_samples_split': [2,10], 'n_jobs': [-1]},
+    'RF': {'n_estimators': [100, 10000], 'max_depth': [5,10,20,50,100], 'max_features': ['sqrt','log2'],'min_samples_split': [2,10], 'n_jobs': [-1]},
 
-    'BA': {'n_estimators': [10,100],'max_features': [1,10]},
+    'BA': {'n_estimators': [10,100]},
     'AB': { 'algorithm': ['SAMME', 'SAMME.R'], 'n_estimators': [10,100]},
     'GB': {'n_estimators': [10,100], 'learning_rate' : [0.001,0.1],'subsample' : [0.1,1.0]},
     'ET': { 'n_estimators': [100,1000], 'criterion' : ['gini', 'entropy'] ,'max_depth': [2,5,50]},
@@ -195,8 +195,8 @@ def plot_models_in_time(models_to_run, best_models_df, metric):
   ax1.set_xlabel('Test set start date')
   ax1.set_ylabel(metric)
 
-  #Invert x_axis so as to show from earliest to latest
-  # ax1.invert_xaxis()
+  
+  plt.xticks(rotation=70)
 
   plt.show()
 
