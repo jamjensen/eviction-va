@@ -39,6 +39,8 @@ def iterate_over_models_and_training_test_sets(models_to_run, models, parameters
     'f1_at_50',
     'auc-roc'))
 
+  # print_df_for_bias_analysis_once=True
+
   #For each training and test set
   for train_test_set in train_test_sets:
 
@@ -58,6 +60,7 @@ def iterate_over_models_and_training_test_sets(models_to_run, models, parameters
             #Train model
             model.fit(train_test_set['x_train'], train_test_set['y_train'])
             
+
             #Predict
             y_pred_scores=0
             if(models_to_run[index] == 'SVM'):
@@ -66,11 +69,34 @@ def iterate_over_models_and_training_test_sets(models_to_run, models, parameters
               y_pred_scores = model.predict_proba(train_test_set['x_test'])[:,1]
             
 
+
             #Sort according to y_pred_scores, keeping map to their y_test values
             y_pred_scores_sorted, y_test_sorted = zip(*sorted(zip(y_pred_scores, train_test_set['y_test']), reverse=True))
-
             #Define different thresholds to calculate metrics
             thresholds_for_metrics = [1,2,5,10,20,30,50]
+
+
+            # #Save df bias & fairness analysis
+            # df_bias = pd.DataFrame()
+            # if(print_df_for_bias_analysis_once):
+
+            #   #Copy all features
+            #   df_bias = train_test_set['x_test'].copy(deep=True)
+            #   #Copy true label
+            #   df_bias['true_label'] = train_test_set['y_test'].copy(deep=True).reset_index(drop=True)
+            #   #Copy score
+            #   df_bias['score'] = y_pred_scores.copy()
+            #   #Sort by score
+            #   df_bias.sort_values(by ='score', ascending= False, inplace=True)
+
+            #   # y_scores, y_true = joint_sort_descending(np.array(y_scores), np.array(y_true))
+
+            #   predictions_at_10 = pipeline.generate_binary_at_k(df_bias['score'], 10)
+            #   df_bias['predicted_label'] = predictions_at_10
+
+            #   df_bias.to_csv('df_bias.csv')
+            #   print_df_for_bias_analysis_once=False
+
 
             #Baseline will be precision at 100% (assign 1 to everybody)
             baseline = pipeline.metric_at_k(y_test_sorted,y_pred_scores_sorted,100,'precision')
