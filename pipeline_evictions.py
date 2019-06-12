@@ -158,10 +158,10 @@ def get_models_and_parameters(grid='normal'):
     'DT': {'criterion': ['gini', 'entropy'], 'max_depth': [2,10,50,100],'min_samples_split': [2,5]},
     'LR': { 'penalty': ['l1','l2'], 'C': [0.001,0.1,10]},#'C': [0.001,0.1,1,10]
     'RF': {'n_estimators': [100,10000], 'max_depth': [5,50,100], 'max_features': ['sqrt'],'min_samples_split': [2,10], 'n_jobs': [-1]},#'max_features': ['sqrt','log2']
-    'BA': {'n_estimators': [10,100]},
+    'BA': {'n_estimators': [10,100, 1000]},
     'AB': { 'algorithm': ['SAMME'], 'n_estimators': [10,100]},#'algorithm': ['SAMME', 'SAMME.R']
     'GB': {'n_estimators': [10,100], 'learning_rate' : [0.001,0.1],'subsample' : [0.1,1.0]},
-    'ET': { 'n_estimators': [100,1000], 'criterion' : ['gini'] ,'max_depth': [2,5,50]},#'criterion' : ['gini', 'entropy']
+    'ET': { 'n_estimators': [100,100], 'criterion' : ['gini'] ,'max_depth': [2,5,50]},#'criterion' : ['gini', 'entropy']
 
     'SVM': {'C' :[10**-2, 10**-1, 1 , 10, 10**2]}, 
     'KNN': {'n_neighbors': [3,5,10,50,100],'weights': ['uniform','distance'],'algorithm': ['auto','ball_tree']},
@@ -174,7 +174,7 @@ def get_models_and_parameters(grid='normal'):
     'DT': {'criterion': ['gini'], 'max_depth': [2,50,100],'min_samples_split': [2]},
     'LR': { 'penalty': ['l1','l2'], 'C': [0.1,10]},
     'RF': {'n_estimators': [100,1000], 'max_depth': [5,50,100], 'max_features': ['sqrt'],'min_samples_split': [2], 'n_jobs': [-1]},
-    'BA': {'n_estimators': [100,100]},
+    'BA': {'n_estimators': [10,100]},
     'AB': { 'algorithm': ['SAMME'], 'n_estimators': [10,100]},
     'GB': {'n_estimators': [10,100], 'learning_rate' : [0.001,0.1]},
     'ET': { 'n_estimators': [100,100], 'criterion' : ['gini'] ,'max_depth': [2,50]},
