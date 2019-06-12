@@ -61,7 +61,7 @@ def impute_data(df, columns_to_process):
 
 
 
-def create_temp_validation_train_and_testing_sets(df, data_column, label_column, split_thresholds, test_window, prediction_horizon):
+def create_temp_validation_train_and_testing_sets(df, data_column, label_column, split_thresholds, test_window, prediction_horizon, feature_generation_gap):
   '''
   Creates a series of temporal validation train and test sets
   Amount of train/test sets depends on length of split_thresholds array
@@ -73,6 +73,7 @@ def create_temp_validation_train_and_testing_sets(df, data_column, label_column,
   label_colum indicates which column is the output label
   test_window indicates length of test data
   prediction_horizon indicates necessary time we need for train and test data to look at outcome (do not include data whose date_posted is in gap time hence)
+  feature_generation_gap is the time of data needed to generate features. because one of the features is "top 10% last year", we cant use data from 2000 in training (we dont have 1999)
   '''
 
   #Array to save train and test sets
@@ -89,8 +90,8 @@ def create_temp_validation_train_and_testing_sets(df, data_column, label_column,
 
     #Columns of boolean values indicating if date_posted value is smaller/bigger than threshold
     
-    #Train data is all data before threshold-gap
-    train_filter = (df[data_column] < split_threshold-prediction_horizon)
+    #Train data is all data before threshold-gap. Keep gap for feature generation (at least one year over the minimum date)
+    train_filter = (df[data_column] < split_threshold-prediction_horizon) & (df[data_column] >= df[data_column].min() + feature_generation_gap)
 
     #Test data is all data thats after training data(after split_threshold), but only consider a length of test_window time, - necessary gap to see all outcomes.
     test_filter = (df[data_column] >= split_threshold) & (df[data_column] < split_threshold+test_window-prediction_horizon)

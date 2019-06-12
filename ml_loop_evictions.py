@@ -74,8 +74,9 @@ def iterate_over_models_and_training_test_sets(models_to_run, models, parameters
                 #Get second column of predict_proba. Also removing first colum of test set (geoid)
                 y_pred_scores = model.predict_proba(train_test_set['x_test'].iloc[:,1:])[:,1]
             
-            else:
-              y_pred_scores = np.ones(len(train_test_set['x_test']))#baline_prediction()
+            else: #Baseline model
+              #Baseline model predicts that the risky tracts are the same as those in top 10% last year
+              y_pred_scores = train_test_set['x_test']['top_10_percent_last_year']
 
 
 
