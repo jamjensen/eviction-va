@@ -43,7 +43,7 @@ def avg_continuous_by_county(df, features=ORIGINAL, aggregation=AGGREGATION):
 
         county_total = df.groupby([aggregation, 'year'])[var].mean().rename('county_average_'
                        + var)
-        df = df.merge(df, county_total, how='left', left_on=['parent-location',
+        df = pd.merge(df, county_total, how='left', left_on=['parent-location',
                       'year'], right_on=['parent-location', 'year'])
 
     return df
