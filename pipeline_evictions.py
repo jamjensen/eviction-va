@@ -42,7 +42,26 @@ def fill_na_columns_with_mean(df, columns_to_process):
         df[col].fillna(df[col].median(), inplace=True)  
   return df
 
-def create_temp_validation_train_and_testing_sets(df, data_column, label_column, split_thresholds, test_window, gap_window):
+# Write a function that imputes median
+def impute_median(series):
+    return series.fillna(series.median())
+
+def impute_data(df, columns_to_process):
+  '''
+  Filling in missing values of df with mean. Operate over specific columns only (columns_to_process)
+  '''
+  for col in columns_to_process:
+
+    # Fill by year
+    by_year = df.groupby(['year'])
+
+    df[col] = by_year[col].transform(lambda x: impute_median(x))
+
+  return df
+
+
+
+def create_temp_validation_train_and_testing_sets(df, data_column, label_column, split_thresholds, test_window, prediction_horizon):
   '''
   Creates a series of temporal validation train and test sets
   Amount of train/test sets depends on length of split_thresholds array
@@ -53,7 +72,7 @@ def create_temp_validation_train_and_testing_sets(df, data_column, label_column,
   features contain features of data
   label_colum indicates which column is the output label
   test_window indicates length of test data
-  gap_window indicates necessary time we need for train and test data to look at outcome (do not include data whose date_posted is in gap time hence)
+  prediction_horizon indicates necessary time we need for train and test data to look at outcome (do not include data whose date_posted is in gap time hence)
   '''
 
   #Array to save train and test sets
@@ -71,14 +90,14 @@ def create_temp_validation_train_and_testing_sets(df, data_column, label_column,
     #Columns of boolean values indicating if date_posted value is smaller/bigger than threshold
     
     #Train data is all data before threshold-gap
-    train_filter = (df[data_column] < split_threshold-gap_window)
+    train_filter = (df[data_column] < split_threshold-prediction_horizon)
 
     #Test data is all data thats after training data(after split_threshold), but only consider a length of test_window time, - necessary gap to see all outcomes.
-    test_filter = (df[data_column] >= split_threshold) & (df[data_column] < split_threshold+test_window-gap_window)
+    test_filter = (df[data_column] >= split_threshold) & (df[data_column] < split_threshold+test_window-prediction_horizon)
     
-    train_test_set['x_train'] = df[train_filter]
+    train_test_set['x_train'] = df.loc[:, df.columns != label_column][train_filter]
     train_test_set['y_train'] = df[label_column][train_filter]
-    train_test_set['x_test'] = df[test_filter] 
+    train_test_set['x_test'] = df.loc[:, df.columns != label_column][test_filter] 
     train_test_set['y_test'] = df[label_column][test_filter]
     
     train_test_sets[index]= train_test_set
@@ -135,7 +154,7 @@ def get_models_and_parameters(grid=None):
 
     'DT': {'criterion': ['gini', 'entropy'], 'max_depth': [2,5,10,50,100],'min_samples_split': [2,5]},
     'LR': { 'penalty': ['l1','l2'], 'C': [0.001,0.1,1,10]},
-    'RF': {'n_estimators': [100, 10000], 'max_depth': [5,10,20,50,100], 'max_features': ['sqrt','log2'],'min_samples_split': [2,10], 'n_jobs': [-1]},
+    'RF': {'n_estimators': [100, 1000], 'max_depth': [5,50,100], 'max_features': ['sqrt','log2'],'min_samples_split': [2,10], 'n_jobs': [-1]},
 
     'BA': {'n_estimators': [10,100]},
     'AB': { 'algorithm': ['SAMME', 'SAMME.R'], 'n_estimators': [10,100]},
@@ -195,6 +214,7 @@ def plot_models_in_time(models_to_run, best_models_df, metric):
   ax1.set_xlabel('Test set start date')
   ax1.set_ylabel(metric)
 
+  ax1.set_ylim([0,1])
   
   plt.xticks(rotation=70)
 
