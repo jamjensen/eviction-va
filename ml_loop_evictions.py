@@ -88,21 +88,27 @@ def iterate_over_models_and_training_test_sets(models_to_run, models, parameters
             #Save df for bias & fairness analysis, + predictions
             df_bias = pd.DataFrame()
 
-            if(models_to_run[index]=="LR"):
+            #Changed from LR to RF and the specific parameters that generate the best model for the last test set
+            if(models_to_run[index]=="RF"):
 
-              #Copy all features
-              df_bias = train_test_set['x_test'].copy(deep=True)
-              #Copy true true_labelel
-              df_bias['true_label'] = train_test_set['y_test'].copy(deep=True).reset_index(drop=True)
-              #Copy score
-              df_bias['score'] = y_pred_scores.copy()
-              #Sort by score
-              df_bias.sort_values(by ='score', ascending= False, inplace=True)
+              if(p['max_depth'] == 5 and p['max_features'] == 'sqrt' and p['min_samples_split'] == 2 and p['n_estimators'] == 1000):
 
-              predictions_at_10 = pipeline.generate_binary_at_k(df_bias['score'], 10)
-              df_bias['predicted_label'] = predictions_at_10
+                #Copy all features
+                df_bias = train_test_set['x_test'].copy(deep=True)
+                #Copy true true_labelel
+                df_bias['true_label'] = train_test_set['y_test'].copy(deep=True).reset_index(drop=True)
+                #Copy score
+                df_bias['score'] = y_pred_scores.copy()
+                #Sort by score
+                df_bias.sort_values(by ='score', ascending= False, inplace=True)
 
-              df_bias.to_csv('best_model_predictions.csv')
+                predictions_at_10 = pipeline.generate_binary_at_k(df_bias['score'], 10)
+                df_bias['predicted_label'] = predictions_at_10
+
+                df_bias.to_csv('best_model_predictions.csv')
+
+                #Calculate best features here
+                #Pending
 
 
             #Baseline will be precision at 100% (assign 1 to everybody)
