@@ -1,6 +1,7 @@
 import pipeline_evictions as pipeline
 
 import pandas as pd
+import numpy as np
 from datetime import date, datetime, timedelta
 
 from sklearn.model_selection import ParameterGrid
@@ -50,28 +51,35 @@ def iterate_over_models_and_training_test_sets(models_to_run, models, parameters
       #Get all possible parameters for the current model
       parameter_values = parameters_grid[models_to_run[index]]
 
+
       #For every combination of parameters
       for p in ParameterGrid(parameter_values):
         print(str(datetime.now())+": Running "+str(models_to_run[index])+" with params: "+str(p) +" on train/test set "+str(train_test_set['test_set_start_date']))  
         try:
-            #Set parameters to the model. ** alows us to use keyword arguments
-            model.set_params(**p)
 
-            #Train model
-            model.fit(train_test_set['x_train'], train_test_set['y_train'])
+            #Baseline model starts assigning 1 to everybody
+            y_pred_scores= np.ones(len(train_test_set['x_test']))
+
+            if(models_to_run[index] != 'Baseline'):
+
+              #Set parameters to the model. ** alows us to use keyword arguments
+              model.set_params(**p)
+
+              #Train model
+              model.fit(train_test_set['x_train'], train_test_set['y_train'])
+              
+
+              #Predict
+              if(models_to_run[index] == 'SVM'):
+                y_pred_scores = model.decision_function(train_test_set['x_test'])
+              else:
+                y_pred_scores = model.predict_proba(train_test_set['x_test'])[:,1]
             
-
-            #Predict
-            y_pred_scores=0
-            if(models_to_run[index] == 'SVM'):
-              y_pred_scores = model.decision_function(train_test_set['x_test'])
             else:
-              y_pred_scores = model.predict_proba(train_test_set['x_test'])[:,1]
-            
+              y_pred_scores = np.ones(len(train_test_set['x_test']))#baline_prediction()
 
 
-            #Sort according to y_pred_scores, keeping map to their y_test values
-            y_pred_scores_sorted, y_test_sorted = zip(*sorted(zip(y_pred_scores, train_test_set['y_test']), reverse=True))
+
             #Define different thresholds to calculate metrics
             thresholds_for_metrics = [1,2,5,10,20,30,50]
 
@@ -99,10 +107,10 @@ def iterate_over_models_and_training_test_sets(models_to_run, models, parameters
 
 
             #Baseline will be precision at 100% (assign 1 to everybody)
-            baseline = pipeline.metric_at_k(y_test_sorted,y_pred_scores_sorted,100,'precision')
+            baseline = pipeline.metric_at_k(train_test_set['y_test'],y_pred_scores,100,'precision')
 
             #Get precision, recall and f1 for the different thresholds
-            prec_rec_f1 = pipeline.generate_precision_recall_f1(y_test_sorted,y_pred_scores_sorted, thresholds_for_metrics)
+            prec_rec_f1 = pipeline.generate_precision_recall_f1(train_test_set['y_test'],y_pred_scores, thresholds_for_metrics)
 
             #Calculate roc metric
             roc_auc = pipeline.roc_auc_score(train_test_set['y_test'], y_pred_scores)

@@ -136,6 +136,7 @@ def get_models_and_parameters(grid=None):
 
   models = {
 
+    'Baseline': 'Baseline model',
     'DT': DecisionTreeClassifier(random_state=0),
     'LR': LogisticRegression(penalty='l1', C=1),
     'RF': RandomForestClassifier(n_estimators=100, max_depth=2, random_state=0),
@@ -152,9 +153,10 @@ def get_models_and_parameters(grid=None):
 
   small_grid = { 
 
+    'Baseline':{},
     'DT': {'criterion': ['gini', 'entropy'], 'max_depth': [2,5,10,50,100],'min_samples_split': [2,5]},
     'LR': { 'penalty': ['l1','l2'], 'C': [0.001,0.1,1,10]},
-    'RF': {'n_estimators': [100, 1000], 'max_depth': [5,50,100], 'max_features': ['sqrt','log2'],'min_samples_split': [2,10], 'n_jobs': [-1]},
+    'RF': {'n_estimators': [100], 'max_depth': [5,50], 'max_features': ['sqrt','log2'],'min_samples_split': [2,10], 'n_jobs': [-1]},
 
     'BA': {'n_estimators': [10,100]},
     'AB': { 'algorithm': ['SAMME', 'SAMME.R'], 'n_estimators': [10,100]},
@@ -169,11 +171,12 @@ def get_models_and_parameters(grid=None):
 
   test_grid = { 
 
+    'Baseline':{},
     'DT': {'criterion': ['gini'], 'max_depth': [1],'min_samples_split': [10]},
     'LR': { 'penalty': ['l1'], 'C': [0.01]},
-    'RF':{'n_estimators': [1], 'max_depth': [1], 'max_features': ['sqrt'],'min_samples_split': [10]},
+    'RF':{'n_estimators': [10], 'max_depth': [5], 'max_features': ['sqrt'],'min_samples_split': [10]},
 
-    'BA': {'n_estimators': [10],'max_features': [1]},
+    'BA': {'n_estimators': [10]},
     'AB': { 'algorithm': ['SAMME'], 'n_estimators': [1]},
     'GB': {'n_estimators': [1], 'learning_rate' : [0.1],'subsample' : [0.5], 'max_depth': [1]},
     'ET': { 'n_estimators': [1], 'criterion' : ['gini'] ,'max_depth': [1], 'max_features': ['sqrt'],'min_samples_split': [10]},
@@ -268,6 +271,8 @@ def generate_precision_recall_f1(y_test_sorted,y_pred_scores_sorted, thresholds)
   '''
   Calculates precision, recall and f1 metrics for different thresholds
   '''
+
+
   metrics = ['precision', 'recall', 'f1']
 
   output_array=[]
@@ -289,8 +294,11 @@ def plot_precision_recall_n(y_true, y_score, model, parameter_values, test_set_s
     -output_type: either saving plot or displaying
     '''
 
+
+
     #Compute precision-recall pairs for different probability thresholds
     precision_curve, recall_curve, pr_thresholds = precision_recall_curve(y_true, y_score) 
+
 
     #The last precision and recall values are 1. and 0 in precision_recall_curve method, now removing them 
     precision_curve = precision_curve[:-1]
