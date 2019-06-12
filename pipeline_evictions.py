@@ -129,7 +129,7 @@ def create_features(train_test_set):
 
   return (train_features, test_features)
 
-def get_models_and_parameters(grid=None):
+def get_models_and_parameters(grid='normal'):
   '''
   Get a set of classifiers and their possible parameters
   '''
@@ -151,17 +151,32 @@ def get_models_and_parameters(grid=None):
     'NB': GaussianNB()
   }
 
+  normal_grid = { 
+
+    'Baseline':{},
+    'DT': {'criterion': ['gini', 'entropy'], 'max_depth': [2,10,50,100],'min_samples_split': [2,5]},
+    'LR': { 'penalty': ['l1','l2'], 'C': [0.001,0.1,10]},#'C': [0.001,0.1,1,10]
+    'RF': {'n_estimators': [100,10000], 'max_depth': [5,50,100], 'max_features': ['sqrt'],'min_samples_split': [2,10], 'n_jobs': [-1]},#'max_features': ['sqrt','log2']
+    'BA': {'n_estimators': [10,100]},
+    'AB': { 'algorithm': ['SAMME'], 'n_estimators': [10,100]},#'algorithm': ['SAMME', 'SAMME.R']
+    'GB': {'n_estimators': [10,100], 'learning_rate' : [0.001,0.1],'subsample' : [0.1,1.0]},
+    'ET': { 'n_estimators': [100,1000], 'criterion' : ['gini'] ,'max_depth': [2,5,50]},#'criterion' : ['gini', 'entropy']
+
+    'SVM': {'C' :[10**-2, 10**-1, 1 , 10, 10**2]}, 
+    'KNN': {'n_neighbors': [3,5,10,50,100],'weights': ['uniform','distance'],'algorithm': ['auto','ball_tree']},
+    'NB' : {}
+  }
+
   small_grid = { 
 
     'Baseline':{},
-    'DT': {'criterion': ['gini', 'entropy'], 'max_depth': [2,5,10,50,100],'min_samples_split': [2,5]},
-    'LR': { 'penalty': ['l1','l2'], 'C': [0.001,0.1,1,10]},
-    'RF': {'n_estimators': [100], 'max_depth': [5,50], 'max_features': ['sqrt','log2'],'min_samples_split': [2,10], 'n_jobs': [-1]},
-
+    'DT': {'criterion': ['gini'], 'max_depth': [2,50,100],'min_samples_split': [2]},
+    'LR': { 'penalty': ['l1','l2'], 'C': [0.1,10]},
+    'RF': {'n_estimators': [10,100], 'max_depth': [5,10], 'max_features': ['sqrt'],'min_samples_split': [2], 'n_jobs': [-1]},
     'BA': {'n_estimators': [10,100]},
-    'AB': { 'algorithm': ['SAMME', 'SAMME.R'], 'n_estimators': [10,100]},
-    'GB': {'n_estimators': [10,100], 'learning_rate' : [0.001,0.1],'subsample' : [0.1,1.0]},
-    'ET': { 'n_estimators': [100,1000], 'criterion' : ['gini', 'entropy'] ,'max_depth': [2,5,50]},
+    'AB': { 'algorithm': ['SAMME'], 'n_estimators': [10,100]},
+    'GB': {'n_estimators': [10,100], 'learning_rate' : [0.001,0.1]},
+    'ET': { 'n_estimators': [100,100], 'criterion' : ['gini'] ,'max_depth': [2,50]},
 
     'SVM': {'C' :[10**-2, 10**-1, 1 , 10, 10**2]}, 
     'KNN': {'n_neighbors': [3,5,10,50,100],'weights': ['uniform','distance'],'algorithm': ['auto','ball_tree']},
@@ -189,8 +204,10 @@ def get_models_and_parameters(grid=None):
   
   if(grid=='test'):
     return models, test_grid
-  else:
+  if(grid=='small'):
     return models, small_grid
+  else:
+    return models, normal_grid
 
 def plot_models_in_time(models_to_run, best_models_df, metric):
   '''
