@@ -1,9 +1,20 @@
+We present the list of features generated and features we would have liked to generate.
+
+Features we wish to have:
+feature_generation.py is ready to generate many features related to change of variables in time. We finally were not able to use these features (thats why line 30 in feature_generation.py is an empty array) because:
+- Census data has no changes for periods of time less than 5 years.
+- Generating features of change compared to 5 years or more in the past would meant having a too big "feature generation gap" (time needed to generate features). In other words, if we wanted to generate these features, we would have been forced not to train our models with data from 2001-2005 (we dont have data from 5 years before that to calculate the features). A future work would be to study the performance of models with less data but with these features, and compare with actual model (which is trained with more data but without these features).
+
+Features generated:
 population
 poverty-rate
 renter-occupied-households
-pct-renter-occupied	median-gross-rent
-median-household-income	median-property-value
-rent-burden	pct-white
+pct-renter-occupied
+median-gross-rent
+median-household-income
+median-property-value
+rent-burden
+pct-white
 pct-af-am
 pct-hispanic
 pct-am-ind
@@ -111,3 +122,5 @@ county_average_eviction-filing-rate_above_10
 county_average_eviction-filing-rate_above_25
 county_average_eviction-filing-rate_above_50
 county_average_eviction-filing-rate_above_75
+
+
