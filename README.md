@@ -1,4 +1,4 @@
-# Predicting Tracts with Risk of High Eviction Rate in Virgina
+# Prioritizing Allocation of Legal Assistance for At-Risk Tenants in Virgina
 
 ## Overview
 Breakdown of time periods for our training and testing sets can be found [here](./data/time_splits.csv). 
