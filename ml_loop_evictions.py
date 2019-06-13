@@ -89,7 +89,7 @@ def iterate_over_models_and_training_test_sets(models_to_run, models, parameters
             df_bias = pd.DataFrame()
 
             #Changed from LR to RF and the specific parameters that generate the best model for the last test set
-            if(models_to_run[index]=="RF"):
+            if(models_to_run[index]=="RF" and train_test_set['test_set_start_date']==pd.Timestamp(2013,1,1)):
 
               if(p['max_depth'] == 5 and p['max_features'] == 'sqrt' and p['min_samples_split'] == 2 and p['n_estimators'] == 1000):
 
@@ -108,8 +108,12 @@ def iterate_over_models_and_training_test_sets(models_to_run, models, parameters
                 df_bias.to_csv('best_model_predictions.csv')
 
                 #Calculate best features here
-                #Pending
+                feature_importances = pd.DataFrame(model.feature_importances_, index = train_test_set['x_train'].columns[:len(train_test_set['x_train'].columns)-1  ],
+                                    columns=['Importance']).sort_values('Importance', ascending=False)
+                
+                feature_importances.to_csv('feature_importances.csv')
 
+                break
 
             #Baseline will be precision at 100% (assign 1 to everybody)
             baseline = pipeline.metric_at_k(train_test_set['y_test'],y_pred_scores,100,'precision')
