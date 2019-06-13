@@ -113,7 +113,6 @@ def iterate_over_models_and_training_test_sets(models_to_run, models, parameters
                 
                 feature_importances.to_csv('feature_importances.csv')
 
-                break
 
             #Baseline will be precision at 100% (assign 1 to everybody)
             baseline = pipeline.metric_at_k(train_test_set['y_test'],y_pred_scores,100,'precision')
