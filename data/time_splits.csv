@@ -1,4 +1,4 @@
-train+AF8-start,train+AF8-end,test+AF8-start,test+AF8-end
+train_start,train_end,test_start,test_end
 2001,2001,2005,2005
 2001,2002,2006,2006
 2001,2003,2007,2007
